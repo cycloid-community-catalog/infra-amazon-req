@@ -1,0 +1,16 @@
+env: ($ environment $)
+project: ($ project $)
+customer: ($ organization_canonical $)
+
+aws_access_key: ((aws.access_key)) 
+aws_secret_key: ((aws.secret_key))
+aws_default_region: eu-west-1
+
+terraform_storage_access_key: ((aws.access_key))
+terraform_storage_secret_key: ((aws.secret_key))
+terraform_storage_bucket_name: req-terraform-remote-state 
+terraform_storage_bucket_path: req/($ environment $)
+
+req_config_git_repository: git@github.com:MyUser/config-req.git
+req_config_git_branch: master
+req_config_git_private_key: ((git_ssh_key.ssh_key))
