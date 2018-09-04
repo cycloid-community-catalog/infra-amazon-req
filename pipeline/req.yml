@@ -1,0 +1,129 @@
+shared:
+  # Task : sync and merge with rsync 2 rep. Used to merge stack and config
+  - &merge-stack-and-config
+    platform: linux
+    image_resource:
+      type: docker-image
+      source:
+        repository: cycloid/cycloid-toolkit
+        tag: latest
+    run:
+      path: /usr/bin/merge-stack-and-config
+    outputs:
+    - name: merged-stack
+      path: "merged-stack"
+
+groups:
+- name: overview
+  jobs:
+  - terraform-apply
+- name: destroy
+  jobs:
+  - terraform-destroy
+
+resource_types:
+- name: terraform
+  type: docker-image
+  source:
+    repository: ljfranklin/terraform-resource
+
+resources:
+- name: terraform-req-((env))
+  type: terraform
+  source:
+    storage:
+      bucket: ((terraform_storage_bucket_name))
+      bucket_path: ((terraform_storage_bucket_path))
+      region_name: ((aws_default_region))
+      access_key_id: ((terraform_storage_access_key))
+      secret_access_key: ((terraform_storage_secret_key))
+    vars:
+      access_key: ((aws_access_key))
+      secret_key: ((aws_secret_key))
+      customer: ((customer))
+      env: ((env))
+      project: ((project))
+      bucket_name: ((terraform_storage_bucket_name))
+    env:
+      AWS_ACCESS_KEY_ID: ((aws_access_key))
+      AWS_DEFAULT_REGION: ((aws_default_region))
+      AWS_SECRET_ACCESS_KEY: ((aws_secret_key))
+
+- name: stack-req-terraform
+  type: git
+  source:
+    uri: https://github.com/cycloid-community-catalog/infra-amazon-req
+    branch: master
+    check_every: 2m
+    path:
+      - /terraform/*
+
+- name: stack-config-terraform
+  type: git
+  source:
+    uri: ((req_config_git_repository))
+    branch: ((req_config_git_branch))
+    check_every: 2m
+    private_key: ((req_config_git_private_key))
+    path: ((project))/terraform/
+
+jobs:
+  - name: terraform-apply
+    build_logs_to_retain: 10
+    plan:
+      - do:
+        # Trigger false because of manual approval
+        - get: stack-req-terraform
+          trigger: false
+        - get: stack-config-terraform
+          trigger: false
+
+        - task: merge-stack-and-config
+          config:
+            <<: *merge-stack-and-config
+            inputs:
+            - name: stack-config-terraform
+              path: "config"
+            - name: stack-req-terraform
+              path: "stack"
+          params:
+            CONFIG_PATH: ((project))/terraform/((env))
+            STACK_PATH: terraform
+
+        - put: terraform-req-((env))
+          params:
+            action: apply
+            env_name: req-((env))
+            terraform_source: merged-stack/
+
+  - name: terraform-destroy
+    build_logs_to_retain: 10
+    plan:
+      - do:
+        # Trigger false because of manual approval
+        - get: stack-req-terraform
+          trigger: false
+        - get: stack-config-terraform
+          trigger: false
+        - get: terraform-req-((env))
+          trigger: false
+
+        - task: merge-stack-and-config
+          config:
+            <<: *merge-stack-and-config
+            inputs:
+            - name: stack-config-terraform
+              path: "config"
+            - name: stack-req-terraform
+              path: "stack"
+          params:
+            CONFIG_PATH: ((project))/terraform/((env))
+            STACK_PATH: terraform
+
+        - put: terraform-req-((env))
+          params:
+            env_name: req-((env))
+            action: destroy
+            terraform_source: merged-stack/
+          get_params:
+            action: destroy

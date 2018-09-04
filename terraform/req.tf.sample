@@ -1,0 +1,24 @@
+module "req" {
+  source = "module-req"
+
+  env      = "${var.env}"
+  project  = "${var.project}"
+  customer = "${var.customer}"
+
+  create_s3_bucket               = "1"
+  create_infra_user              = "1"
+  
+  create_codecommit_repository   = "1"
+  codecommit_readonly_key_public = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQA...3s+KslkalkI198auyP r2d2"
+  codecommit_key_public          = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQA...90T3s+YwdVVqNzsauyP r2d2"
+
+  # extra possible variables
+  # for S3:
+  # force_destroy                = false
+  # bucket_name                  = "my-super-bucket"
+
+  # for codecommit:
+  # codecommit_repository_name   = "cycloid-r2d2"
+  # suffix                       = ""
+  # infra_iam_arn                = ""
+}
