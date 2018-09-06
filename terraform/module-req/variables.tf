@@ -36,7 +36,7 @@ variable bucket_name {
 }
 
 variable force_destroy {
-  default = false
+  default = true
 }
 
 # To know if the the infra user has to be created or not

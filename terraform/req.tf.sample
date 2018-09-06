@@ -13,7 +13,7 @@ module "req" {
   codecommit_key_public          = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQA...90T3s+YwdVVqNzsauyP r2d2"
 
   # extra possible variables
-  # for S3:
+  # for S3: by default it WILL delete the s3 bucket containing its remote state.
   # force_destroy                = false
   # bucket_name                  = "my-super-bucket"
 
