@@ -70,9 +70,14 @@ data "aws_iam_policy_document" "codecommit_readonly" {
 }
 
 resource "aws_iam_user_policy" "codecommit_readonly" {
-  count = "${var.create_codecommit_repository == "1" ? 1 : 0}"
+  count       = "${var.create_codecommit_repository == "1" ? 1 : 0}"
+  name        = "codecommit-stacks-readonly${var.suffix}"
+  description = "A policy to allow readonly access to CodeCommit"
+  policy      = "${data.aws_iam_policy_document.codecommit_readonly.json}"
+}
 
-  name   = "codecommit-stacks-readonly${var.suffix}"
-  user   = "${aws_iam_user.codecommit_readonly.name}"
-  policy = "${data.aws_iam_policy_document.codecommit_readonly.json}"
+resource "aws_iam_user_policy_attachement" "codecommit_readonly_attachement" {
+  count      = "${var.create_codecommit_repository == "1" ? 1 : 0}"
+  user       = "${aws_iam_user.codecommit_readonly.name}"
+  policy_arn = "${aws_iam_user_policy.codecommit_readonly.arn}"
 }

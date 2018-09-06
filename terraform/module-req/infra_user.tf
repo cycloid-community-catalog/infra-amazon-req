@@ -11,17 +11,8 @@ resource "aws_iam_access_key" "infra" {
   user = "${aws_iam_user.infra.name}"
 }
 
-resource "aws_iam_policy_attachment" "infra_administrator_access" {
-  count = "${var.create_infra_user ? 1 : 0}"
-
-  name       = "infra-AdministratorAccess${var.suffix}"
-  users      = ["${aws_iam_user.infra.name}"]
-  roles      = ["admin"]
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-
-  lifecycle {
-    ignore_changes = [
-      "groups",
-    ]
-  }
+resource "aws_iam_user_policy_attachment" "infra_user_admin_attach" {
+    count      = "${var.create_infra_user ? 1 : 0}"
+    user       = "${aws_iam_user.infra.name}"
+    policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
