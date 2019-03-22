@@ -54,7 +54,6 @@ resources:
   source:
     uri: https://github.com/cycloid-community-catalog/infra-amazon-req
     branch: master
-    check_every: 2m
     path:
       - /terraform/*
 
@@ -63,7 +62,6 @@ resources:
   source:
     uri: ((req_config_git_repository))
     branch: ((req_config_git_branch))
-    check_every: 2m
     private_key: ((req_config_git_private_key))
     path: ((project))/terraform/
 
