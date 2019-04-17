@@ -1,24 +1,37 @@
 module "req" {
+
+  #####################################
+  # Do not modify the following lines #
   source = "module-req"
-
-  env      = "${var.env}"
-  project  = "${var.project}"
+  env     = "${var.env}"
+  project = "${var.project}"
   customer = "${var.customer}"
+  #####################################
 
-  create_s3_bucket               = "1"
-  create_infra_user              = "1"
+  #. create_s3_bucket (optional, string): "1"
+  #+ To know if the the S3 bucket has to be created or not
   
-  create_codecommit_repository   = "1"
-  codecommit_readonly_key_public = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQA...3s+KslkalkI198auyP r2d2"
-  codecommit_key_public          = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQA...90T3s+YwdVVqNzsauyP r2d2"
+  #. create_codecommit_repository (optional, string): "1""
+  #+ To know if the the codecommit repo has to be created or not
 
-  # extra possible variables
-  # for S3: by default it WILL delete the s3 bucket containing its remote state.
-  # force_destroy                = false
-  # bucket_name                  = "my-super-bucket"
+  #. codecommit_readonly_key_public (optional): ""
+  #+ Only required when using codecommit - key allowing readonly access to the repository
 
-  # for codecommit:
-  # codecommit_repository_name   = "cycloid-r2d2"
-  # suffix                       = ""
-  # infra_iam_arn                = ""
+  #.  codecommit_key_public (optional): ""
+  #+ Only required when using codecommit - key allowing admin access to the repository
+
+  #. force_destroy (optional, bool): true
+  #+ for S3: by default it WILL delete the s3 bucket containing its remote state.
+
+  #. bucket_name (optional): req-terraform-remote-state
+  #+ Specify the S3 bucket name 
+
+  #. codecommit_repository_name (optional): cycloid-${var.customer}-servicescatalog
+  #+ Codecommit repository name to create
+
+  #. suffix (optional): ""
+  #+ Extra potential suffix in case of already existing users
+
+  #. infra_iam_arn (optional): ""
+  #+ If provided this user will be used instead of the created one
 }

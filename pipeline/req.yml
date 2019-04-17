@@ -28,18 +28,19 @@ resource_types:
     repository: ljfranklin/terraform-resource
 
 resources:
-- name: terraform-req-((env))
+- name: tfstate
   type: terraform
   source:
     storage:
       bucket: ((terraform_storage_bucket_name))
       bucket_path: ((terraform_storage_bucket_path))
       region_name: ((aws_default_region))
-      access_key_id: ((terraform_storage_access_key))
-      secret_access_key: ((terraform_storage_secret_key))
+      access_key_id: ((aws_access_key))
+      secret_access_key: ((aws_secret_key))
     vars:
       access_key: ((aws_access_key))
       secret_key: ((aws_secret_key))
+      aws_region: ((aws_default_region))
       customer: ((customer))
       env: ((env))
       project: ((project))
@@ -49,21 +50,23 @@ resources:
       AWS_DEFAULT_REGION: ((aws_default_region))
       AWS_SECRET_ACCESS_KEY: ((aws_secret_key))
 
-- name: stack-req-terraform
+- name: git_stack-terraform
   type: git
   source:
     uri: https://github.com/cycloid-community-catalog/infra-amazon-req
     branch: master
-    path:
-      - /terraform/*
+    paths:
+    - terraform/*
 
-- name: stack-config-terraform
+
+- name: git_config-terraform
   type: git
   source:
-    uri: ((req_config_git_repository))
-    branch: ((req_config_git_branch))
-    private_key: ((req_config_git_private_key))
-    path: ((project))/terraform/
+    uri: ((config_git_repository))
+    branch: ((config_git_branch))
+    private_key: ((config_git_private_key))
+    paths:
+    - ((project))/terraform/*
 
 jobs:
   - name: terraform-apply
@@ -71,24 +74,24 @@ jobs:
     plan:
       - do:
         # Trigger false because of manual approval
-        - get: stack-req-terraform
+        - get: git_stack-terraform
           trigger: false
-        - get: stack-config-terraform
+        - get: git_config-terraform
           trigger: false
 
         - task: merge-stack-and-config
           config:
             <<: *merge-stack-and-config
             inputs:
-            - name: stack-config-terraform
+            - name: git_config-terraform
               path: "config"
-            - name: stack-req-terraform
+            - name: git_stack-terraform
               path: "stack"
           params:
             CONFIG_PATH: ((project))/terraform/((env))
             STACK_PATH: terraform
 
-        - put: terraform-req-((env))
+        - put: tfstate
           params:
             action: apply
             env_name: req-((env))
@@ -99,26 +102,26 @@ jobs:
     plan:
       - do:
         # Trigger false because of manual approval
-        - get: stack-req-terraform
+        - get: git_stack-terraform
           trigger: false
-        - get: stack-config-terraform
+        - get: git_config-terraform
           trigger: false
-        - get: terraform-req-((env))
+        - get: tfstate
           trigger: false
 
         - task: merge-stack-and-config
           config:
             <<: *merge-stack-and-config
             inputs:
-            - name: stack-config-terraform
+            - name: git_config-terraform
               path: "config"
-            - name: stack-req-terraform
+            - name: git_stack-terraform
               path: "stack"
           params:
             CONFIG_PATH: ((project))/terraform/((env))
             STACK_PATH: terraform
 
-        - put: terraform-req-((env))
+        - put: tfstate
           params:
             env_name: req-((env))
             action: destroy
