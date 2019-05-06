@@ -33,7 +33,7 @@ Because of the very own nature of this stack (likely first one to run), there ar
 
 **Jobs description**
 
-  * `terraform-apply`: Terraform job similar to the plan one, but will actually create/update everything that needs to. Please see the plan diff for a better understanding.
+  * `terraform-apply`: Terraform job similar to the plan one, but will actually create/update everything that needs to.
   * `terraform-destroy`: :warning: Terraform job meant to destroy the whole stack - **NO CONFIRMATION ASKED**. If triggered, the full project **WILL** be destroyed. Use with caution.
 
 **Params**
