@@ -26,7 +26,7 @@ resource "aws_iam_user_ssh_key" "admin" {
   count = "${var.create_codecommit_repository == "1" ? 1 : 0}"
 
   username   = "${data.aws_iam_user.admin.user_name}"
-  encoding   = "PEM"
+  encoding   = "SSH"
   public_key = "${var.codecommit_key_public}"
 }
 
