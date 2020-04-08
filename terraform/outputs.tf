@@ -30,10 +30,10 @@ output "req_remote_state_bucket_name" {
 
 output "req_infra_user_id" {
   value       = "${module.req.infra_user_id}"
-  descroption = "IAM infra user ID"
+  description = "IAM infra user ID"
 }
 
 output "req_infra_user_arn" {
   value       = "${module.req.infra_user_arn}"
-  descroption = "IAM infra user ARN"
+  description = "IAM infra user ARN"
 }
