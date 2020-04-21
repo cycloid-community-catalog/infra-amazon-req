@@ -2,7 +2,7 @@
 name: 'Amazon requirements'
 canonical: 'aws-requirements'
 status: 'public'
-description: 'Create optionnaly an S3 bucket for terraform, IAM user as admin and codecommit repository.'
+description: 'Create optionally an S3 bucket for terraform, IAM user as admin and codecommit repository.'
 keywords:
   - 's3'
   - 'iam'
