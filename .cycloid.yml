@@ -26,6 +26,7 @@ config:
       path: 'pipeline/req.yml'
     variables:
       path: 'pipeline/variables.yml.sample'
+      destination: '($ project $)/pipeline/variables-($ environment $).yml'
 
   # Configuration of ansible for provisionning
   ansible: {}
