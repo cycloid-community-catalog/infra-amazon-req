@@ -44,7 +44,7 @@ Because of the very own nature of this stack (likely first one to run), there ar
 |`aws_default_region`|Amazon AWS region to use for Terraform.|`-`|`eu-west-1`|`True`|
 |`aws_secret_key`|Amazon AWS secret key for Terraform. see value format [Here](https://docs.cycloid.io/advanced-guide/integrate-and-use-cycloid-credentials-manager.html#vault-in-the-pipeline)|`-`|`((aws.secret_key))`|`True`|
 |`config_git_branch`|Branch of the config git repository.|`-`|`config`|`True`|
-|`config_git_private_key`|SSH key pair to fetch the config git repository.|`-`|`((git_ssh_key.ssh_key))`|`True`|
+|`config_git_private_key`|SSH key pair to fetch the config git repository.|`-`|`((ssh_config.ssh_key))`|`True`|
 |`config_git_repository`|Git repository url containing the config of the stack.|`-`|`git@github.com:MyUser/config-req.git`|`True`|
 |`customer`|Name of the Cycloid Organization, used as customer variable name.|`-`|`($ organization_canonical $)`|`True`|
 |`env`|Name of the project's environment.|`-`|`($ environment $)`|`True`|
